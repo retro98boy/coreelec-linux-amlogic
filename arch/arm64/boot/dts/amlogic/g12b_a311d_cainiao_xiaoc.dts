@@ -1,0 +1,102 @@
+#include "coreelec_g12b.dtsi"
+
+/{
+	model = "CAINIAO XIAOC";
+	coreelec-dt-id = "g12b_a311d_cainiao_xiaoc";
+
+	/delete-node/ memory@00000000;
+
+	cvbsout {
+		status = "disabled";
+	};
+
+	/delete-node/ gpioleds;
+	/delete-node/ adc_keypad;
+	gpio_keypad {
+		key-gpios = <&gpio_ao GPIOAO_3 GPIO_ACTIVE_LOW>;
+	};
+
+	/delete-node/ rtc;
+
+	auge_sound {
+		/delete-property/ avout_mute-gpios;
+	};
+
+	/* HDMI USB1 USB2 USB3 USB4 Type-C */
+	regulator-vcc-5v-usb1 {
+		compatible = "regulator-fixed";
+		enable-active-high;
+		gpio = <&gpio GPIOA_12 GPIO_ACTIVE_HIGH>;
+		regulator-name = "vcc_5v_usb1";
+		regulator-always-on;
+		regulator-boot-on;
+	};
+
+	regulator-vcc-5v-usb2 {
+		compatible = "regulator-fixed";
+		enable-active-high;
+		gpio = <&gpio GPIOA_2 GPIO_ACTIVE_HIGH>;
+		regulator-name = "vcc_5v_usb2";
+		regulator-always-on;
+		regulator-boot-on;
+	};
+
+	regulator-vcc-5v-usb3 {
+		compatible = "regulator-fixed";
+		enable-active-high;
+		gpio = <&gpio GPIOA_3 GPIO_ACTIVE_HIGH>;
+		regulator-name = "vcc_5v_usb3";
+		regulator-always-on;
+		regulator-boot-on;
+	};
+
+	regulator-vcc-5v-usb4 {
+		compatible = "regulator-fixed";
+		enable-active-high;
+		gpio = <&gpio GPIOA_4 GPIO_ACTIVE_HIGH>;
+		regulator-name = "vcc_5v_usb4";
+		regulator-always-on;
+		regulator-boot-on;
+	};
+
+	regulator-vcc-5v-typec {
+		compatible = "regulator-fixed";
+		enable-active-high;
+		gpio = <&gpio GPIOA_11 GPIO_ACTIVE_HIGH>;
+		regulator-name = "vcc_5v_typec";
+		regulator-always-on;
+		regulator-boot-on;
+	};
+};
+
+&ethmac {
+	auto_cali_idx = <1>;
+};
+
+&i2c3 {
+	status = "okay";
+	pinctrl-names="default";
+	pinctrl-0=<&i2c3_master_pins2>;
+	clock-frequency = <100000>;
+
+	hym8563: rtc@51 {
+		compatible = "haoyu,hym8563";
+		reg = <0x51>;
+		#clock-cells = <0>;
+	};
+};
+
+&pwm_ef {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pwm_f_pins1>;
+};
+
+&usb3_phy_v2 {
+	/delete-property/ gpio-vbus-power;
+	/delete-property/ gpios;
+	otg = <1>;
+};
+
+&pcie_A {
+	status = "disabled";
+};

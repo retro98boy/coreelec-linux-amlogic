@@ -1,0 +1,66 @@
+#include "coreelec_g12b.dtsi"
+
+/{
+	model = "CAINIAO XiaoYi Pro";
+	coreelec-dt-id = "g12b_a311d_cainiao_xiaoyi_pro";
+
+	/delete-node/ memory@00000000;
+
+	cvbsout {
+		status = "disabled";
+	};
+
+	/delete-node/ gpioleds;
+	/delete-node/ adc_keypad;
+	/delete-node/ gpio_keypad;
+
+	/delete-node/ rtc;
+
+	auge_sound {
+		/delete-property/ avout_mute-gpios;
+	};
+
+	bt-dev{
+		/delete-property/ gpio_hostwake;
+	};
+
+	regulator-host-vbus {
+		compatible = "regulator-fixed";
+		enable-active-high;
+		gpio = <&gpio GPIOA_0 GPIO_ACTIVE_HIGH>;
+		regulator-name = "host_vbus";
+		regulator-always-on;
+		regulator-boot-on;
+	};
+};
+
+&ethmac {
+	auto_cali_idx = <1>;
+};
+
+&i2c3 {
+	status = "okay";
+	pinctrl-names="default";
+	pinctrl-0=<&i2c3_master_pins2>;
+	clock-frequency = <100000>;
+
+	at8307t: rtc@68 {
+		compatible = "dallas,ds1307";
+		reg = <0x68>;
+	};
+};
+
+&pwm_ef {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pwm_f_pins1>;
+};
+
+&usb3_phy_v2 {
+	/delete-property/ gpio-vbus-power;
+	/delete-property/ gpios;
+	otg = <1>;
+};
+
+&pcie_A {
+	status = "disabled";
+};

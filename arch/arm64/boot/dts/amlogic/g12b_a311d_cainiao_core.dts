@@ -1,0 +1,78 @@
+#include "coreelec_g12b.dtsi"
+
+/{
+	model = "CAINIAO CORE";
+	coreelec-dt-id = "g12b_a311d_cainiao_core";
+
+	/delete-node/ memory@00000000;
+
+	cvbsout {
+		status = "disabled";
+	};
+
+	/delete-node/ gpioleds;
+	/delete-node/ adc_keypad;
+	gpio_keypad {
+		key-gpios = <&gpio_ao GPIOAO_3 GPIO_ACTIVE_LOW>;
+	};
+
+	/delete-node/ rtc;
+
+	auge_sound {
+		/delete-property/ avout_mute-gpios;
+	};
+
+	/* important to usb hub */
+	amp_power: regulator-amp-power {
+		compatible = "regulator-fixed";
+		enable-active-high;
+		gpio = <&gpio GPIOH_8 GPIO_ACTIVE_HIGH>;
+		regulator-name = "amp_power";
+		regulator-always-on;
+		regulator-boot-on;
+	};
+
+	regulator-usb-pwr {
+		compatible = "regulator-fixed";
+		enable-active-high;
+		gpio = <&gpio_ao GPIOAO_6 GPIO_ACTIVE_HIGH>; /* always keep usb hub reset pin high */
+		regulator-name = "usb_pwr";
+		regulator-always-on;
+		regulator-boot-on;
+	};
+
+	/*
+	 * The Type-C port on the host is switched with the four USB contacts on the side of the host via GPIOA_14.
+	 * Since the Type-C port on the host is either used for power supply or blocked by the dock,
+	 * switching USB 2.0 access to the four contacts on the side of the host is a better choice.
+	 * To use the Type-C port for data transmission,
+	 * you only need to set GPIOA_14 in the node below to a high level.
+	 */
+	regulator-usb-switch {
+		compatible = "regulator-fixed";
+		enable-active-low;
+		gpio = <&gpio GPIOA_14 GPIO_ACTIVE_LOW>;
+		regulator-name = "usb_switch";
+		regulator-always-on;
+		regulator-boot-on;
+	};
+};
+
+&ethmac {
+	auto_cali_idx = <1>;
+};
+
+&pwm_ef {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pwm_f_pins1>;
+};
+
+&usb3_phy_v2 {
+	/delete-property/ gpio-vbus-power;
+	/delete-property/ gpios;
+	otg = <1>;
+};
+
+&pcie_A {
+	status = "disabled";
+};
